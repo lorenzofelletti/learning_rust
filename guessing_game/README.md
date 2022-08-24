@@ -1,3 +1,6 @@
+## Intro
+In the following paragraphs we will explain the implementation of the guessing game.
+
 ## Cargo
 Cargo is Rust’s build system and package manager.
 
@@ -47,4 +50,24 @@ To work on any existing projects, you can use the following commands to check ou
 $ git clone example.org/someproject
 $ cd someproject
 $ cargo build
+```
+
+## Generating a Random Number
+### Using a crate to Get More Functionality
+To generate a random number between 1 and 100, we can use the `rand` crate.
+
+In `Cargo.toml` we can add the following dependency:
+```toml
+[dependencies]
+rand = "0.8.3"
+```
+The number 0.8.3 means that any version of `rand` that is 0.8.3 or higher, but below 0.9.0, can be used.
+
+Cargo considers these versions to have public APIs compatible with version 0.8.3, and this specification ensures you’ll get the latest patch release that will still compile with the code. Any version 0.9.0 or greater is not guaranteed to have the same API as what the following examples use.
+
+### Generating a Random Number With the Rand Crate
+```Rust
+use rand::Rng;
+// --snip--
+let secret_number = rand::thread_rng().gen_range(1..=100)
 ```
