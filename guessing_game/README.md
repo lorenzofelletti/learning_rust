@@ -71,3 +71,57 @@ use rand::Rng;
 // --snip--
 let secret_number = rand::thread_rng().gen_range(1..=100)
 ```
+First we import the `Rng` trait from the `rand` crate.
+
+Then we use the `thread_rng` method to get a reference to a random number generator (that is local to the current thread of execution and seeded by the OS).
+
+Then we use the `gen_range` method to get a random number between 1 and 100. This method takes a range expression as an argument, and returns a random number between the start and end of the range. The kind of range expression we’re using here takes the form `start..=end` and is inclusive on the lower and upper bounds
+
+### Parsing and Comparing the Guess and the Secret Number
+```Rust
+let guess: u32 = match guess.trim().parse().expect("Please enter a number!");
+```
+The above line parses the guess as a u32. If the parse fails, we print an error message and return early.
+
+The `parse` method on strings converts a string to another type. Here, we use it to convert from a string to a number. We need to tell Rust the exact number type we want by using `let guess: u32`. The colon (`:`) after guess tells Rust we’ll annotate the variable’s type.
+
+To compare the guess and the secret number, we use the match expression.
+First, we need to import the `std::cmp::Ordering` enum.
+
+The `Ordering` type is an enum that has the variants `Less`, `Equal`, and `Greater`.
+
+Then, we can write the following:
+```Rust
+match guess.cmp(&secret_number) {
+    Ordering::Less => println!("Too small!"),
+    Ordering::Greater => println!("Too big!"),
+    Ordering::Equal => println!("You win!");
+}
+```
+We use a match expression to decide what to do next based on which variant of the `Ordering` enum was returned from the call to `cmp`.
+
+A `match` expression is made up of *arms*. An arm consists of a *pattern* to match against, and a *block* of code to run if the value given to `match` fits that arm’s pattern.
+
+## Looping
+The `loop` keyword creates an infinite loop.
+```Rust
+loop {
+    println!("Please input your guess.");
+
+    // --snip--
+
+    let guess: u32 = match guess.trim().parse() {
+        Ok(num) => num,
+        Err(_) => continue,
+    };
+
+    match guess.cmp(&secret_number) {
+        Ordering::Less => println!("Too small!"),
+        Ordering::Greater => println!("Too big!"),
+        Ordering::Equal => {
+            println!("You win!");
+            break;
+        }
+    }
+}
+```
