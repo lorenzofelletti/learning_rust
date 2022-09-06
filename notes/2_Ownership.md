@@ -138,3 +138,127 @@ While this works, taking ownership and then returning ownership with every funct
 Luckily for us, Rust has a feature for using a value without transferring ownership, called *references*.
 
 ### References and Borrowing
+A *reference* is like a pointer in that it's an **address** we can follow to access the data stored at that address; that data is *owned* by some other variable. Unlike a pointer, a reference is guaranteed to point to a *valid value* of a *particular type* for the life of that reference.
+
+Here is an example of how to use references:
+```Rust
+fn main() {
+    let s1 = String::from("hello");
+
+    let len = calculate_length(&s1);
+
+    println!("The length of '{}' is {}.", s1, len);
+}
+
+fn calculate_length(s: &String) -> usize { // s is a reference to a String
+    s.len()
+} // Here, s goes out of scope, but it does not have ownership of what it refers to, so nothing happens.
+```
+
+The `&` (ampersand) represent a reference. References allow to refer to some value without taking ownership of it.
+
+The opposite of referencing is *dereferencing*, which is accomplished with the dereference operator, `*`. Dereferencing a reference gives us access to the value it points to.
+
+We call the action of creating a reference **borrowing**. As in real life, if a person owns something, you can borrow it from them. When you’re done, you have to give it back. You don’t own it.
+
+#### Mutable References
+Mutable references allow us to modify a borrowed value:
+```Rust
+fn main() {
+    let mut s = String::from("hello");
+
+    change(&mut s);
+}
+
+fn change(some_string: &mut String) {
+    some_string.push_str(", world");
+}
+```
+
+Mutable references have one big restriction: you can have only ***one*** mutable reference to a particular piece of data in a particular scope. This code will not compile:
+```Rust
+let mut s = String::from("hello");
+
+let r1 = &mut s;
+let r2 = &mut s;
+
+println!("{}, {}", r1, r2);
+```
+
+The restriction preventing multiple mutable references to the same data at the same time allows for mutation but in a very controlled fashion.
+The benefit of having this restriction is that Rust can prevent data races at compile time. A *data race* is similar to a race condition and happens when these three behaviors occur:
+ - Two or more pointers access the same data at the same time.
+ - At least one of the pointers is being used to write to the data.
+ - There’s no mechanism being used to synchronize access to the data.
+
+we can use curly brackets to create a new scope, allowing for multiple mutable references, just not simultaneous ones:
+```Rust
+let mut s = String::from("hello");
+
+{
+    let r1 = &mut s;
+} // r1 goes out of scope here, so we can make a new reference with no problems.
+
+let r2 = &mut s;
+```
+
+We also *cannot* have a mutable reference while we have an immutable one to the same value. This code will not compile:
+```Rust
+let mut s = String::from("hello");
+
+let r1 = &s; // no problem
+let r2 = &s; // no problem
+let r3 = &mut s; // BIG PROBLEM
+
+println!("{}, {}, and {}", r1, r2, r3);
+```
+
+Users of an immutable reference don’t expect the value to suddenly change out from under them! However, multiple immutable references are allowed because no one who is just reading the data has the ability to affect anyone else’s reading of the data.
+
+Note that a reference’s scope starts from where it is introduced and continues through the last time that reference is used. For instance, this code will compile because the last usage of the immutable references, the println!, occurs before the mutable reference is introduced:
+```Rust
+fn main() {
+    let mut s = String::from("hello");
+
+    let r1 = &s; // no problem
+    let r2 = &s; // no problem
+    println!("{} and {}", r1, r2);
+    // variables r1 and r2 will not be used after this point
+
+    let r3 = &mut s; // no problem
+    println!("{}", r3);
+}
+```
+
+### Dangling References
+Rust prevents dangling references at compile time. Consider this code:
+```Rust
+fn main() {
+    let reference_to_nothing = dangle();
+}
+
+fn dangle() -> &String { // dangle returns a reference to a String
+
+    let s = String::from("hello"); // s is a new String
+
+    &s // we return a reference to the String, s
+} // Here, s goes out of scope, and is dropped. Its memory goes away.
+  // Danger!
+```
+This code will not compile because the reference would return a reference to a value that was dropped.
+
+The solution is to return the `string directly`:
+```Rust
+fn no_dangle() -> String {
+    let s = String::from("hello");
+
+    s
+}
+```
+
+### References Rules Recap
+Here’s a quick recap of the rules of references:
+ - At any given time, you can have *either* one mutable reference or any number of immutable references.
+ - References must always be valid.
+
+### The Slice Type
