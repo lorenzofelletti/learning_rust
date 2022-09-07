@@ -24,5 +24,58 @@ let user1 = User {
 
 To get (or set if the struct is `mut`) a specific value from a struct, we can use dot notation:
 ```Rust
+// get
 let email = user1.email;
+
+// set (if user1 is mut)
+user1.email = String::from("new@mail.com");
 ```
+
+An instance's fields must be either all mutable or all immutable.
+
+### Instantiating Structs with a Function
+We can define a function that takes a struct as an argument and returns an instance of that struct:
+```Rust
+fn build_user(email: String, username: String) -> User {
+    User {
+        email,
+        username,
+        active: true,
+        sign_in_count: 1,
+    }
+}
+```
+
+### String Update Syntax
+We can use the shorthand syntax to update a struct's fields if we want to change only some of the fields:
+```Rust
+let user2 = User {
+    email: String::from("another@example.com"),
+    ..user1
+};
+```
+
+### Tuple Structs
+A `tuple struct` is a variation of the struct that look similar to tuples, but has the added meaning the struct name provides but doesn't have named fields to help with clarity. Tuple structs are useful when you want to give the whole tuple a name and make the tuple be a different type from other tuples.
+Example:
+```Rust
+struct Color(i32, i32, i32);
+
+fn main() {
+    let black = Color(0, 0, 0);
+}
+```
+
+### Unit-Like Structs
+A `unit-like struct` is a struct that doesn't have any fields. Unit-like structs can be useful in situations in which you need to implement a trait on some type but don't have any data that you want to store in the type itself. Unit-like structs are useful when you need to implement a trait on some type but don't have any data that you want to store in the type itself.
+Example:
+```Rust
+struct Unit;
+
+fn main() {
+    let unit = Unit;
+}
+```
+
+### Ownership of Struct Data
+It's possible for structs to store references, but to do so requires the use of *lifetimes*. Lifetimes ensure that the data referenced by a struct is valid for as long as the struct is.
