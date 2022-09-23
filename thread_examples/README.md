@@ -25,3 +25,19 @@ let handle = thread::spawn(|| {
 // Wait for the thread to finish.
 handle.join().unwrap();
 ```
+
+### The move Keyword
+The `move` keyword is used to move the closure's captured variables into the new thread.
+Example:
+```Rust
+let v = vec![1, 2, 3];
+
+let handle = thread::spawn(move || {
+    println!("Here's a vector: {:?}", v);
+});
+
+handle.join().unwrap();
+```
+
+Move converts any variables captured by reference or mutable reference to variables captured by value.
+This is because the spawned thread may outlive the parent thread, and the parent thread may not be able to access the variables in the spawned thread.
