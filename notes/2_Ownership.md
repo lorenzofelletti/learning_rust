@@ -262,3 +262,20 @@ Here’s a quick recap of the rules of references:
  - References must always be valid.
 
 ### The Slice Type
+Slices let you reference a contiguous sequence of elements in a collection rather than the whole collection. A slice is a kind of reference, so it does not have ownership.
+
+#### String Slices
+A string slice is a reference to part of a `String`, and it looks like this:
+```Rust
+let s = String::from("hello world");
+
+let hello = &s[0..5];
+let world = &s[6..11];
+```
+
+We create slices using a range within brackets by specifying `[starting_index..ending_index]`.
+
+With slices, we cannot have the error of the string and its indexes going out of sync, because the compiler will check that the slice is valid.
+
+#### String Literals Are Slices
+The type `&str` is a *slice* pointing to a specific point of the binary. This is also why string literals are immutable; `&str` is an immutable reference.

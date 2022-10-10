@@ -79,3 +79,13 @@ fn main() {
 
 ### Ownership of Struct Data
 It's possible for structs to store references, but to do so requires the use of *lifetimes*. Lifetimes ensure that the data referenced by a struct is valid for as long as the struct is.
+
+### Methods
+#### Defining Methods
+To define a method on a struct, we put the `impl` keyword and then the name of the struct. Inside the `impl` block is where we define the methods, which have the same syntax as functions.
+
+### Automatic Referencing and Dereferencing
+Rust does dereferencing automatically when we call methods with `&self` or `&mut self` as a parameter. This means we don't have to write `&` or `&mut` before `self` when we call methods. This feature is called *automatic referencing and dereferencing*.
+
+### Associated Functions
+Associated functions are similar to static methods in other languages. They're associated with a struct, but don't have access to the struct's data. They're still in the `impl` block, but they don't take `self` as a parameter. Associated functions are often used for constructors that will return a new instance of the struct.
