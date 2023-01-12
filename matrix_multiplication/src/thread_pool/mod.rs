@@ -1,3 +1,4 @@
+use log::info;
 use std::cmp::min_by;
 use std::num::NonZeroUsize;
 use std::sync::mpsc;
@@ -6,9 +7,9 @@ use std::thread::{self, JoinHandle};
 
 /// A ThreadPool that manages a variable number of threads.
 /// The maximum number of threads however cannot exceed the number of available threads on the system.
-/// 
+///
 /// # Note
-/// You may want to call drop explicitly soon as you are done with the thread pool, otherwise 
+/// You may want to call drop explicitly soon as you are done with the thread pool, otherwise
 /// unexpected behaviour may occur.
 pub struct ThreadPool {
     /// Vector of worker threads
@@ -86,11 +87,11 @@ impl Worker {
 
             match message {
                 Message::NewJob(job) => {
-                    println!("Worker {} got a job; executing.", id);
+                    info!("Worker {} got a job; executing.", id);
                     job();
                 }
                 Message::Terminate => {
-                    println!("Worker {} was told to terminate.", id);
+                    info!("Worker {} was told to terminate.", id);
                     break;
                 }
             }

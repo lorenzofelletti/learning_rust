@@ -133,14 +133,12 @@ pub fn matrix_multiplication_parallel_i_loop(
     let flatten_b = b.iter().flatten().cloned().collect::<Vec<_>>();
 
     for i in 0..size {
-        // c[i][j] += a[i][k] * b[k][j];
         let a_i = AMatrixElement(a[i].as_ptr());
         let mut c_i = CMatrixElement(c[i].as_mut_ptr());
         let flatten_b = AMatrixElement(flatten_b.as_ptr());
 
         unsafe {
             pool.execute(move || {
-                let i = i;
                 for j in 0..size {
                     for k in 0..size {
                         *c_i.add(j) += *a_i.add(k) * *flatten_b.add(k * size + j);
