@@ -6,7 +6,7 @@ use log::debug;
 use crate::{
     cli::Cli,
     matrix_multiplication::{
-        generate_square_matrix_of_size, matrix_multiplication_parallel_i_loop,
+        generate::generate_square_matrix_of_size, matrix_multiplication_parallel_i_loop,
         matrix_multiplication_sequential_ijk, matrix_multiplication_sequential_ikj,
     },
 };
@@ -77,8 +77,10 @@ fn matrix_multiplication_benchmark(cli: &Cli) {
     // print results
 
     println!("Benchmark Results");
-    println!("sequential ijk average: {} ms", sequential_ijk_average);
-    println!("sequential ikj average: {} ms", sequential_ikj_average);
+    if parallel_only == false {
+        println!("sequential ijk average: {} ms", sequential_ijk_average);
+        println!("sequential ikj average: {} ms", sequential_ikj_average);
+    }
     println!("parallel ijk average: {} ms", parallel_ijk_average);
 }
 
